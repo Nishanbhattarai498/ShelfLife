@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Image } from 'react-native';
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Save, User, Camera, Store } from 'lucide-react-native';
 import { api } from '../services/api';
@@ -7,8 +7,8 @@ import { useColorScheme } from 'nativewind';
 import { LoadingView, StatusPopup } from '../components/ui/States';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
-import InputField from '../components/ui/InputField';
-import Button from '../components/ui/Button';
+import { InputField } from '../components/ui/InputField';
+import { Button } from '../components/ui/Button';
 
 export default function EditProfile() {
   const router = useRouter();

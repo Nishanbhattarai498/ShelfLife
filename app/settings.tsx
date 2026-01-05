@@ -26,7 +26,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Settings() {
   const router = useRouter();
   const { user } = useUser();
-  const { colorScheme, toggleColorScheme, setColorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
   const [weeklyDigest, setWeeklyDigest] = useState(true);
   const [productUpdates, setProductUpdates] = useState(false);
   const [dataSaver, setDataSaver] = useState(false);

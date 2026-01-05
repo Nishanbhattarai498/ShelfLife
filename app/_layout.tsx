@@ -108,10 +108,10 @@ function InitialLayout() {
     const promptLocation = async () => {
       try {
         const current = await Location.getForegroundPermissionsAsync();
-        if (current.status === 'granted' || current.status === 'limited') return;
+        if (current.status === 'granted') return;
 
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted' && status !== 'limited') {
+        if (status !== 'granted') {
           Alert.alert(
             'Allow location access',
             'Turn on location to see nearby food items. You can also enable it later in Settings.'
@@ -130,7 +130,7 @@ function InitialLayout() {
       if (state !== 'active' || !isSignedIn) return;
       try {
         const current = await Location.getForegroundPermissionsAsync();
-        if (current.status === 'granted' || current.status === 'limited') return;
+        if (current.status === 'granted') return;
         await Location.requestForegroundPermissionsAsync();
       } catch (err) {
         console.log('Location permission check on resume failed', err);
@@ -144,7 +144,7 @@ function InitialLayout() {
     // Enable immersive mode - hide navigation bar on Android and re-apply on resume/theme change
     const applyImmersive = () => {
       if (Platform.OS !== 'android') return;
-      NavigationBar.setVisibilityAsync('immersive').catch(() => NavigationBar.setVisibilityAsync('hidden'));
+      NavigationBar.setVisibilityAsync('hidden').catch(() => NavigationBar.setVisibilityAsync('hidden'));
       // setBehaviorAsync triggers warnings with edge-to-edge; guard with try/catch and ignore failures
       try {
         NavigationBar.setBehaviorAsync('overlay-swipe').catch(() => undefined);
@@ -186,7 +186,7 @@ function InitialLayout() {
 
         // Determine if we're running in Expo Go — if so, skip remote push setup.
         // Using dynamic import of expo-constants to avoid adding it at module scope.
-        const Constants = await import('expo-constants');
+        const Constants = (await import('expo-constants')) as any;
         const appOwnership = Constants?.default?.appOwnership ?? Constants?.appOwnership;
         if (appOwnership === 'expo') {
           // Running in Expo Go — remote push is not supported. Skip registration.
@@ -208,7 +208,7 @@ function InitialLayout() {
 
         responseListener = Notifications.addNotificationResponseReceivedListener(async (response) => {
           try {
-            const data = response?.notification?.request?.content?.data ?? {};
+            const data: any = response?.notification?.request?.content?.data ?? {};
             const convId = data?.conversationId ?? data?.conversation?.id ?? data?.conversationIdString;
             const openTarget = process.env.EXPO_PUBLIC_NOTIFICATION_OPEN_TARGET || 'chat';
 

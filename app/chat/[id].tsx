@@ -55,11 +55,17 @@ const AudioMessage = ({ url, isMe, isDark, messageId }: { url?: string, isMe: bo
       // If server returned a data URI, persist to cache so expo-audio can stream it
       if (url.startsWith('data:audio')) {
         const base64 = url.split(',')[1] || '';
-        const filePath = `${FileSystem.cacheDirectory}voice_${messageId}.m4a`;
+        const cacheDir: string | null = (FileSystem as any).cacheDirectory ?? (FileSystem as any).documentDirectory ?? null;
+        if (!cacheDir) {
+          setPlayableUri(url);
+          return;
+        }
+        const filePath = `${cacheDir}voice_${messageId}.m4a`;
         try {
           const info = await FileSystem.getInfoAsync(filePath);
           if (!info.exists) {
-            await FileSystem.writeAsStringAsync(filePath, base64, { encoding: FileSystem.EncodingType.Base64 });
+            const encoding = ((FileSystem as any).EncodingType?.Base64 ?? 'base64') as any;
+            await FileSystem.writeAsStringAsync(filePath, base64, { encoding });
           }
           if (!cancelled) setPlayableUri(filePath);
         } catch (e) {
@@ -330,7 +336,8 @@ export default function Chat() {
         return;
       }
 
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      const encoding = ((FileSystem as any).EncodingType?.Base64 ?? 'base64') as any;
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding });
       const res = await api.post(`/messages/${id}/messages`, { 
         type: 'AUDIO',
         mediaBase64: `data:audio/aac;base64,${base64}`,
